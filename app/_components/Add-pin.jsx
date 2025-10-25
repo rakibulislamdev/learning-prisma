@@ -11,7 +11,7 @@ const AddPin = () => {
       alert(result.message);
       e.target.reset();
     } else {
-      alert(result.error);
+      alert("Failed to create pin: " + result.message);
     }
   }
 

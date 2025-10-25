@@ -1,7 +1,6 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 
 export async function createPin(formData) {
@@ -20,12 +19,9 @@ export async function createPin(formData) {
       },
     });
     revalidatePath("/");
-    return { success: true, message: "Pin created successfully!" };
+    return { success: true, message: "Pin created successfully", pin };
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { error: "Failed to create pin" },
-      { status: 500 }
-    );
+    return { success: false, message: "Error creating pin" };
   }
 }

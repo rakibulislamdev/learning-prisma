@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 
 export async function DELETE(req, { params }) {
   const { pinId } = await params;
@@ -13,6 +14,9 @@ export async function DELETE(req, { params }) {
         id: pinId,
       },
     });
+
+    revalidatePath("/");
+
     return NextResponse.json(deletePin, {
       status: 200,
     });

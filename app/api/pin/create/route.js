@@ -12,8 +12,7 @@ export async function POST(request) {
     });
 
     return NextResponse.json(
-      pin,
-      { message: "Pin created successfully" },
+      { pin, message: "Pin created successfully" },
       { status: 201 }
     );
   } catch (error) {
