@@ -20,6 +20,7 @@ export async function createPin(formData) {
       },
     });
     revalidatePath("/");
+    return { success: true, message: "Pin created successfully!" };
   } catch (error) {
     console.error(error);
     return NextResponse.json(
