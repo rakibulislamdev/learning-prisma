@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "react-toastify";
 import { createPin } from "../server";
 
 const AddPin = () => {
@@ -8,10 +9,10 @@ const AddPin = () => {
     const formData = new FormData(e.target);
     const result = await createPin(formData);
     if (result.success) {
-      alert(result.message);
+      toast.success(result.message);
       e.target.reset();
     } else {
-      alert("Failed to create pin: " + result.message);
+      toast.error("Failed to create pin: " + result.message);
     }
   }
 

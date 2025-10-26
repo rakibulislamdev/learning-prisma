@@ -3,10 +3,12 @@ import { useState } from "react";
 import { Ellipsis, SquarePen, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import EditModal from "./EditModal";
+import { toast } from "react-toastify";
 
-export default function Delete({ pinId }) {
+export default function Delete({ pinId, pinTitle }) {
   const [openThreeDotMenu, setOpenThreeDotMenu] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -26,9 +28,9 @@ export default function Delete({ pinId }) {
       );
       if (response.ok) {
         router.refresh();
-        alert("Pin deleted successfully");
+        toast.success(`${pinTitle} deleted successfully`);
       } else {
-        alert("Failed to delete pin");
+        toast.error("Failed to delete pin");
       }
     } catch (error) {
       console.error("Error deleting pin:", error);
@@ -50,10 +52,10 @@ export default function Delete({ pinId }) {
         setOpenModal(true);
         setOpenThreeDotMenu(false);
       } else {
-        alert("Failed to fetch pin data");
+        toast.error("Failed to fetch pin data for editing");
       }
     } catch (error) {
-      alert("Error fetching pin data:", error);
+      console.error("Error fetching pin data:", error);
     }
   };
 
@@ -61,6 +63,7 @@ export default function Delete({ pinId }) {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const response = await fetch(
         `http://localhost:3000/api/pin/${pinId}/edit`,
@@ -73,14 +76,16 @@ export default function Delete({ pinId }) {
         }
       );
       if (response.ok) {
-        alert("Pin updated successfully");
+        toast.success(`${formData.title} updated successfully`);
         setOpenModal(false);
         router.refresh();
       } else {
-        alert("Failed to update pin");
+        toast.error("Failed to update pin");
       }
     } catch (error) {
       console.error("Error updating pin:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -120,6 +125,7 @@ export default function Delete({ pinId }) {
           setFormData={setFormData}
           onCloseModal={() => setOpenModal(false)}
           handleUpdate={handleUpdate}
+          isLoading={isLoading}
         />
       )}
     </div>

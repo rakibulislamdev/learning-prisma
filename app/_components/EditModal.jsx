@@ -5,6 +5,7 @@ export default function EditModal({
   setFormData,
   onCloseModal,
   handleUpdate,
+  isLoading,
 }) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-40">
@@ -43,9 +44,10 @@ export default function EditModal({
 
           <button
             type="submit"
+            disabled={isLoading}
             className="bg-amber-300 hover:bg-amber-400 text-black rounded-md py-2 mt-2"
           >
-            Update
+            {isLoading ? "Updating..." : "Update"}
           </button>
         </form>
       </div>

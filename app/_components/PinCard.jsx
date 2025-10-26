@@ -10,7 +10,7 @@ const PinCard = ({ pin }) => {
               {pin.title}
             </h1>
           </div>
-          <Delete pinId={pin.id} />
+          <Delete pinId={pin.id} pinTitle={pin.title} />
         </div>
 
         <p className="text-gray-600 mt-3 dark:text-[#abc2d3]/90 text-[0.9rem]">
