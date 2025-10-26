@@ -7,7 +7,7 @@ export async function PUT(req, { params }) {
     if (!pinId) {
       return NextResponse.json("Not Found", { status: 404 });
     }
-    const { title } = await req.json();
+    const { title, description, type, content } = await req.json();
 
     const updatePin = await db.pin.update({
       where: {
@@ -15,6 +15,9 @@ export async function PUT(req, { params }) {
       },
       data: {
         title: title,
+        description: description,
+        type: type,
+        content: content,
       },
     });
     return NextResponse.json(updatePin, { status: 200 });

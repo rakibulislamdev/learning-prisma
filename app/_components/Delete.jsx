@@ -1,10 +1,19 @@
 "use client";
 import { useState } from "react";
-import { Ellipsis, Bookmark, Trash } from "lucide-react";
+import { Ellipsis, SquarePen, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
+import EditModal from "./EditModal";
 
 export default function Delete({ pinId }) {
   const [openThreeDotMenu, setOpenThreeDotMenu] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    type: "",
+    content: "",
+  });
+
   const router = useRouter();
 
   const handleDelete = async (pinId) => {
@@ -26,6 +35,55 @@ export default function Delete({ pinId }) {
     }
   };
 
+  // EDIT handler (fetch data + open modal)
+  const handleEdit = async (pinId) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/pin/${pinId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setFormData({
+          title: data.title,
+          description: data.description,
+          type: data.type,
+          content: data.content,
+        });
+        setOpenModal(true);
+        setOpenThreeDotMenu(false);
+      } else {
+        alert("Failed to fetch pin data");
+      }
+    } catch (error) {
+      alert("Error fetching pin data:", error);
+    }
+  };
+
+  // UPDATE handler (sent to modal)
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/pin/${pinId}/edit`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+      if (response.ok) {
+        alert("Pin updated successfully");
+        setOpenModal(false);
+        router.refresh();
+      } else {
+        alert("Failed to update pin");
+      }
+    } catch (error) {
+      console.error("Error updating pin:", error);
+    }
+  };
+
   return (
     <div className="relative">
       <Ellipsis
@@ -40,9 +98,12 @@ export default function Delete({ pinId }) {
             : "translate-y-[-10px] opacity-0 z-[-1] h-0"
         } transition-all duration-200 bg-white w-max boxShadow py-1 rounded-md dark:bg-slate-900 absolute top-6 right-0`}
       >
-        <li className="py-2 px-4 dark:hover:bg-slate-800/60 dark:text-[#abc2d3] hover:bg-gray-100 cursor-pointer flex items-center gap-[8px] text-[0.9rem] text-gray-600">
-          <Bookmark />
-          Make favorite
+        <li
+          onClick={() => handleEdit(pinId)}
+          className="py-2 px-4 dark:hover:bg-slate-800/60 dark:text-[#abc2d3] hover:bg-gray-100 cursor-pointer flex items-center gap-[8px] text-[0.9rem] text-gray-600"
+        >
+          <SquarePen />
+          Edit
         </li>
         <li
           onClick={() => handleDelete(pinId)}
@@ -52,6 +113,15 @@ export default function Delete({ pinId }) {
           Delete
         </li>
       </ul>
+
+      {openModal && (
+        <EditModal
+          formData={formData}
+          setFormData={setFormData}
+          onCloseModal={() => setOpenModal(false)}
+          handleUpdate={handleUpdate}
+        />
+      )}
     </div>
   );
 }
